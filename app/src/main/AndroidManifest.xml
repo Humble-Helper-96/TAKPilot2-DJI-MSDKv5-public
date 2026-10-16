@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- DjiSdkBridge.REQUIRED_PERMISSIONS asks for these two on API < 33, and this manifest
+         never declared them — the build only worked because the DJI AAR happens to merge them
+         in. That is the VIBRATE fault seen once already, waiting to happen again: an SDK update
+         that drops them would leave checkSelfPermission reporting a permission this app
+         REQUESTS as permanently denied, the gate would never open, and the SDK would never
+         register, with no dialog and no error. Declared here so the requirement is ours, not a
+         side effect of a dependency. maxSdkVersion mirrors the AAR and scoped storage: past
+         API 32 the app writes through MediaStore and needs neither. -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <uses-feature
+        android:name="android.hardware.usb.host"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.usb.accessory"
+        android:required="true" />
+
+    <application
+        android:name="com.dji.sdk.sample.takpilot2.TAKPilot2Application"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/sample_app_name"
+        android:theme="@style/AppTheme"
+        android:extractNativeLibs="true"
+        tools:replace="android:allowBackup">
+
+        <!-- DJI key. Fed from dji-key.properties through build.gradle. -->
+        <meta-data
+            android:name="com.dji.sdk.API_KEY"
+            android:value="${API_KEY}" />
+
+        <!-- ⚠ THE THEME IS NOT OPTIONAL. Without it this activity inherits the application
+             theme (AppTheme, a Theme.AppCompat.Light.DarkActionBar), which paints a LIGHT
+             ActionBar over the dark home layout and leaves the status bar at the platform
+             default. The home screen draws its own chrome (the cards), so the platform bar is
+             dead space.
+
+             SolidStatusBar, not plain NoActionBar: the home layout does not go immersive the
+             way the flight screen does, so a transparent status bar leaves an unpainted strip
+             where the platform's light scrim shows through. -->
+        <activity
+            android:name="com.dji.sdk.sample.takpilot2.TAKPilot2GoHomeActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar.SolidStatusBar"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- USB_ACCESSORY_ATTACHED used to be declared on Home, above. Home is singleTask,
+             so delivering that intent brought Home forward and DESTROYED the flight screen with
+             it — killing the drone's CoT feed to TAK and the team's video mid-sortie. It owns
+             the filter and the accessory meta-data now, shows nothing, and finishes at once, so
+             the pilot's task stack is never disturbed. Same structure as DJI's own v5 sample.
+             The filter must live on an ACTIVITY: the framework does not deliver this action to
+             a manifest-declared receiver. -->
+        <activity
+            android:name="com.dji.sdk.sample.takpilot2.UsbAttachActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:noHistory="true"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+                android:resource="@xml/accessory_filter" />
+        </activity>
+
+        <activity
+            android:name="com.dji.sdk.sample.takpilot2.TAKPilot2GoFlightActivity"
+            android:label="@string/sample_app_name"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false" />
+
+        <activity
+            android:name="com.dji.sdk.sample.tak.TakConnectActivity"
+            android:label="Pre-Flight Setup"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false" />
+
+        <activity
+            android:name="com.dji.sdk.sample.DataSyncActivity"
+            android:label="Data Sync"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false" />
+
+        <activity
+            android:name="com.dji.sdk.sample.takpilot2.FieldGuideActivity"
+            android:label="Field Guide"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false" />
+
+        <activity
+            android:name="com.dji.sdk.sample.tak.VideoServersActivity"
+            android:label="Video Servers"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity
+            android:name="com.dji.sdk.sample.tak.TakServerActivity"
+            android:label="TAK Server"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity
+            android:name="com.dji.sdk.sample.tak.DebugActivity"
+            android:label="Debug Log"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false" />
+
+        <service
+            android:name="com.dji.sdk.sample.tak.TakForegroundService"
+            android:foregroundServiceType="dataSync"
+            android:exported="false" />
+
+        <!-- Hosts the screen-capture RTSP stream (MediaProjection). -->
+        <service
+            android:name="com.dji.sdk.sample.tak.ScreenCaptureService"
+            android:foregroundServiceType="mediaProjection"
+            android:exported="false" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+</manifest>

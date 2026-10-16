@@ -1,0 +1,17 @@
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+.kotlin/
+app/dji-key.properties
+app/keystore.properties
+app/*.jks
+captures/
+.DS_Store
+__pycache__/
+
+# Release artefacts and R8 mappings copied out by the build
+releases/
+*.apk
+*.aab

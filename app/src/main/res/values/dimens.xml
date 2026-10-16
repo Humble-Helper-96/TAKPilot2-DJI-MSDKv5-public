@@ -1,0 +1,320 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <!-- UI Text Size -->
+    <dimen name="textsize_connection">20dp</dimen>
+
+    <!-- List View Relative -->
+    <dimen name="item_arrow_width">26dp</dimen>
+    <dimen name="item_arrow_height">44dp</dimen>
+    <dimen name="item_min_height">44dp</dimen>
+    <dimen name="item_value_size">18sp</dimen>
+    <dimen name="item_title_size">18sp</dimen>
+    <dimen name="test_log_textsize">17sp</dimen>
+    <dimen name="button_widget">200dp</dimen>
+    <!-- Flight-screen mini-map edge. The HUD's right-hand column is the tightest space in the
+         app: toolbar, exposure block, telemetry and map all share one landscape screen height,
+         and the map is the single largest item. This default is sized for SHORT screens (a
+         Samsung S21 is ~411dp tall in landscape); values-h440dp gives taller devices the bigger
+         map. Shrinking the map rather than the text keeps the readout legible in daylight,
+         which is the part that actually has to work in the field. -->
+    <!-- ⚠ REDUCED to pay for the HUD panels. The two panels add
+         4dp of padding at the top and bottom of each, 16dp in total, and this bucket had only
+         5dp of slack in the worst case (FAA ceiling visible). Worst case is now:
+
+             paddingTop 60 + EV slider 24 + map 110 + paddingBottom 12 + margins 20
+               + 16 x 10 text lines + 2 panels x 8dp padding = 402dp
+
+         ⚠ paddingTop is 8dp now (the actions left the band, the EV slider rose
+         to the band's top), so every figure below has 52dp more slack than it says. Measured
+         on the RC Plus 2: root 480dp, map bottom 477dp.
+
+         against 411dp of screen, so 9dp of slack. The remedy is to take the height from
+         flight_map_size, never by re-joining
+         the readout lines. **This is arithmetic, not a measurement.**
+
+         ⚠ RE-COUNTED FOR THE HUD REFRESH, AND IT CAME OUT LEVEL:
+
+             - 2 panels x 8dp of vertical padding      -16dp   (the panels are gone)
+             + 7 outlined views x about 1.6dp          +11dp   (OutlinedTextView's own padding)
+             + the height size hierarchy               + 4dp   (net of the smaller unit
+                                                                and position line)
+                                                       =======
+                                                       -1dp
+
+         The panels were paying for the outline and did not know it. The vertical 4dp they
+         supplied is DELIBERATELY NOT restored on the blocks — see the flight layout — because
+         that is the 16dp above, and without it this refresh would not fit on this device.
+
+         ⚠ THIS IS STILL ARITHMETIC AND STILL NOT A MEASUREMENT, and it is now a tighter piece
+         of arithmetic than before. MEASURE IT with `dumpsys activity top` on the RC Plus 2
+         before a release. The failure mode is the mini-map clipped SILENTLY at the
+         bottom of the column. Adding ONE more outlined readout costs about 1.6dp. -->
+    <!-- ⚠ 148dp, NOT 110dp. This is the COLUMN width, thus it is also the
+         width the aircraft's latitude and longitude have to print in. At 110dp the pair wrapped
+         onto two lines on the RC Plus 2. The coordinate line is about 18 characters
+         at roughly 6dp each, about 108dp, and the panel adds 8dp of padding on each side — so
+         the column needs about 124dp before the pair fits on one line, and 148dp leaves room
+         for a third digit of longitude.
+
+         Raising this widens the MAP too, because the map takes the column's width. That is
+         accepted here: the RC Plus 2 is 768dp wide and the column costs 152dp of it.
+         flight_map_height is deliberately NOT raised with it — the vertical budget above has
+         only about 14dp of slack on this device, while width is abundant. -->
+    <!-- WARNING BANNER, per device. What the banner IS — white bold, severity on the
+         background — is fixed; these two numbers belong to the device.
+         At 15sp in 380dp the banner covered about a third of the RC Plus
+         2's video, because this screen is only 768dp wide.
+         13sp fits the same text in fewer, shorter lines. The width stays 380dp:
+         narrowing it does not shrink the banner, it makes it TALLER, and height is what
+         covers the picture. -->
+    <!-- ⚠ RE-SIZED BY PROPORTION: these were
+         a 1024x720dp controller's 15sp/480dp scaled only by eye, and on this panel — where a dp
+         is 24 % larger than nominal — the banner still read as full size.
+         Scaled the way the column pills were: 15sp by the screens' height ratio
+         (480/720) is 10sp; 11sp is the floor the outline and bold still read at. The width
+         follows the text (11/13 of 380 is 320) so the LINE COUNT does not grow — narrowing
+         the box without shrinking the text makes the banner taller, and height is what
+         covers the picture. The ✕ is the column's control height, one target size across the
+         screen. Paddings 8/6/4/4 from 12/8/6/6, the same two-thirds. -->
+    <dimen name="flight_warning_text_size">11sp</dimen>
+    <dimen name="flight_warning_max_width">320dp</dimen>
+    <dimen name="flight_warning_padding_start">8dp</dimen>
+    <dimen name="flight_warning_padding_end">6dp</dimen>
+    <dimen name="flight_warning_padding_v">4dp</dimen>
+    <!-- The banner's ✕ close button. A touch target, not a glyph box: the same 30dp as every
+         control in the band and the column on this controller; the ✕ it holds is about 8dp
+         wide. It ADDS to the banner width, thus max_width above no longer bounds the whole
+         banner. -->
+    <dimen name="flight_warning_close_size">@dimen/hud_column_pill_height</dimen>
+    <!-- The transient notice (top-centre): the same 11sp as the banner, by the same
+         proportion, and hung 8dp under the 44dp band (it was 64dp under the top, set when
+         the band was 60). -->
+    <dimen name="flight_notice_text_size">11sp</dimen>
+    <dimen name="flight_notice_margin_top">52dp</dimen>
+    <!-- THE ANTENNA-AIM ARC'S PLACE. It was bottom-centre
+         (x 344-428dp) and the banner, now bottom-left, ran under it: x 80 to as far
+         as 430 (flight_left_chrome_clear 80 + max width 320 + the 30dp close). The arc goes
+         into the strip the banner can never reach, between the banner's furthest right edge
+         and the HUD column:
+
+             strip   = 80 + 320 + 30 + 8 air = 438  ..  602 (the HUD column's left)
+             arc     = (40dp radius + 3 x 5dp marker) x 2 = 110dp wide (AntennaAimView)
+             centre  = (438 + 602) / 2 = 520   →   start = 520 - 55 = 465dp
+
+         Move the banner's width or the HUD column and this moves with them. -->
+    <dimen name="flight_antenna_arc_margin_start">465dp</dimen>
+
+    <!-- The accessory panel (L2). 280dp of a 768dp screen — wide enough for a usable brightness
+         slider, and it still leaves the crosshair and the whole right-hand HUD column clear.
+         Do not grow it past a third of the width: it opens over live video in flight. -->
+    <dimen name="accessory_panel_width">280dp</dimen>
+
+    <dimen name="flight_map_size">148dp</dimen>
+    <!-- ⚠ DERIVED, NOT A FREE NUMBER: flight_map_size + the HUD column's paddingEnd, which is
+         4dp (it was 14dp, which left a visible gap against the right edge of
+         the screen). 148 + 4 = 152. Change this in EVERY bucket whenever either input moves;
+         it is a MUST because it has silently broken twice. -->
+    <dimen name="flight_resource_row_margin_end">152dp</dimen>
+    <!-- Separate from flight_map_size so a taller screen can carry a taller map
+         without a wider HUD column. Equal to the width today, so the map is square
+         and nothing moved when this was introduced. -->
+    <!-- ⚠ 119dp, AND THE COLUMN'S paddingBottom CAME DOWN 12->3 TO PAY FOR IT.
+         The corner now carries the vision-assist view as well as the map, and its bottom edge
+         lines up with the L3 "IR" chip on the opposite side of the screen (design decision).
+         That chip's stack sits 3dp off the bottom, so the column's bottom padding had to match —
+         and the 9dp that freed went straight into the map, which is why the VERTICAL BUDGET
+         ABOVE IS UNCHANGED at about 402dp. ⚠ Do not raise this without taking the height from
+         somewhere; overflow clips the map with no warning and no log line. -->
+    <dimen name="flight_map_height">119dp</dimen>
+    <!-- HUD readout size, per bucket. 12sp is what hudText already used, so this
+         changed no pixel; it exists so a controller can raise it.
+         On a sunlight-readable screen at arm's length 12sp is too small. -->
+    <dimen name="flight_readout_text_size">12sp</dimen>
+
+    <!-- HUD CHROME DIMENSIONS.
+
+         ⚠ THE BASE BUCKET IS THE RC PLUS 2's BUCKET. This build has one target and no phone to
+         share with, so these ARE its per-device values; this controller draws readouts at
+         12sp. -->
+
+    <!-- The one edge weight the whole HUD shares — readouts, EV slider, map frame. About an
+         EIGHTH of the readout text size, which is 12sp here.
+         ⚠ TOO WIDE AND THE READOUTS TURN TO BLACK BLOBS: the stroke is CENTRED on the glyph
+         edge, so half of it falls inside the letter and is covered by the fill. -->
+    <dimen name="hud_text_outline_width">1.5dp</dimen>
+
+    <!-- The shape of every toggle pill: AR, zoom, re-sync, LIVE, REC, and the mini-map's zoom
+         button. The mini-map's corners take hud_pill_radius too.
+         ⚠ 8dp IS NOT hud_control_radius. The capsule is the container and takes the large
+         radius; the pills INSIDE it take the small one, and so does the map, which is read
+         rather than pressed. -->
+    <dimen name="hud_pill_radius">8dp</dimen>
+    <dimen name="hud_pill_stroke">1.5dp</dimen>
+
+    <!-- The floating toolbar capsules. Large radius: "you touch this". -->
+    <dimen name="hud_control_radius">20dp</dimen>
+
+    <!-- ⚠ BOTH TOOLBAR CAPSULES MUST BE THIS TALL, AND IT IS A MINIMUM, NOT A HEIGHT.
+         The two clusters hold different things, so they measure differently: the ACTIONS
+         capsule's tallest child is the 46dp drop pin and the STATUS capsule's is a 34dp icon.
+         Two capsules that begin on the same line and end on different ones read as a mistake.
+
+         ⚠ IT IS DERIVED, NOT CHOSEN: the actions capsule's natural height, which is the drop
+         pin plus the capsule's own paddingVertical on each side.
+
+             46dp drop pin + 2 x 3dp paddingVertical = 52dp
+
+         A value BELOW that does nothing at all === the actions capsule is already taller, and
+         the status capsule stays short. It was 40dp once, and the capsules were not level.
+         If the drop pin or the padding changes, this changes with them.
+
+         A MINIMUM rather than a fixed height because either cluster may still grow: a longer
+         signal readout, a taller button style, a density not yet seen. minHeight can only make
+         a capsule taller, thus it can never clip its own content. -->
+    <!-- ⚠ RE-DERIVED. The actions left the band for the column,
+         taking the 46dp drop pin with them; the band's controls then took the column's pill
+         height, so the capsule's tallest child
+         is a 30dp control:
+
+             30dp control + 2 x 3dp paddingVertical = 36dp
+
+         and the band is 8dp paddingTop + 36dp = 44dp. The band's height is the top chrome
+         inset for the AR overlay and the obstacle view, and hud_column_margin_top derives
+         from it — move this and move that. -->
+    <dimen name="hud_capsule_height">36dp</dimen>
+
+    <!-- ===== THE ACTIONS COLUMN (measured) =====
+         The seven action pills stand in ONE vertical column at the top-left of the video.
+         Every number below was measured on the RC Plus 2 with
+         `dumpsys activity top`; no dp value transfers between devices.
+
+         THE SCREEN: the flight activity hides the status bar (48dp) and the navigation bar
+         (16dp) and lays out under both, so the root FrameLayout is 768 x 480dp — not the
+         416dp `am get-config` reports, nor the 464dp the hardware doc assumed. Measured as
+         `android:id/content 0,0-1920,1200` at 2.5 px/dp, with both bar backgrounds 0px tall.
+
+         THE BUDGET (seven pills; no PIP, no thermal-size pill on MSDKv5):
+
+             7 x 30dp pills               210dp
+             6 x 10dp gaps                 60dp
+             2 x  8dp paddingVertical      16dp
+                                          ======
+             column                       286dp
+             + marginTop                   48dp   (band 44 + 4)
+                                          ======
+                                          334dp   of 480dp, 146dp clear above the bottom edge.
+
+         ⚠ SIZED BY PROPORTION, NOT BY COPYING. The first cut kept a 42dp pill height taken
+         from a 1024x720dp controller; measured on the device it put
+         the column at y 64-450 and it was plainly too large for this panel, and it buried the
+         L1/L2 hint chips at the bottom-left (MARK at y 383, ACC at 421). A 42dp pill
+         is 5.8 % of a 720dp screen height; 42dp here is 8.75 % of 480. Scaling that
+         column by the two screens' heights (480/720 = 2/3) gives 28dp pills and a 12dp gap,
+         and by their widths (768/1024 = 3/4) a 50dp pill; rounded to what the labels need,
+         that is 52 x 30 with a 10dp gap. The column's foot at 334dp clears the chips by 49dp.
+
+         A dp on this panel is about 24 % larger than nominal, so a 30dp pill here is a
+         touch target of about the physical size of a 37dp one at nominal density. -->
+
+    <!-- ONE width and ONE height for all seven. 52dp holds "▶ LIVE" and "● REC" at 13sp
+         (the toggle views measure their own text; see them) and the four-glyph "2.4X" the
+         zoom pill can show. 30dp is the proportional height — see the budget above. -->
+    <dimen name="hud_column_pill_width">52dp</dimen>
+    <dimen name="hud_column_pill_height">30dp</dimen>
+    <!-- The gap between pills: a third of a pill (the 18-of-42 ratio the column was scaled from). -->
+    <dimen name="hud_column_pill_gap">10dp</dimen>
+    <!-- The capsule's own padding. 6dp sideways: the column is 52 + 12 + 8 margin = 72dp of a
+         768dp screen, and the banner and the left obstacle label start to its right. 8dp
+         vertically: the capsule corners (hud_control_radius, 20dp) eat into the first and
+         last pill, so they get a little more air than the sides. -->
+    <dimen name="hud_column_padding_h">6dp</dimen>
+    <dimen name="hud_column_padding_v">8dp</dimen>
+    <!-- The label size on the text pills (AR, IR, zoom). 13sp: the band's pills were 14sp
+         in a 34dp box; a 30dp box takes one step down and the glyphs still clear the stroke. -->
+    <dimen name="hud_column_pill_text">13sp</dimen>
+    <!-- Below the band. The band measures 44dp (8dp paddingTop + the 36dp status capsule);
+         4dp of air under it. The band's
+         height is the AR overlay's top chrome inset, thus this margin and that inset agree. -->
+    <dimen name="hud_column_margin_top">48dp</dimen>
+    <!-- Flush with the band's own 8dp paddingHorizontal, so the column's left edge and the
+         status capsule's left edge are one line. -->
+    <dimen name="hud_column_margin_start">8dp</dimen>
+
+    <!-- WHAT STARTS TO THE RIGHT OF THE COLUMN. The column's right edge
+         is marginStart 8 + paddingHorizontal 6 + pill 52 + 6 = 72dp, measured as 72 on the
+         RC Plus 2. 8dp of air, the column's own margin, puts these at 80dp. The
+         warning banner starts to the right of the column — on THIS screen the two were expected
+         to overlap in Y, and they do not (the column's foot is 334dp, the banner's
+         top about 440), but the L1/L2/L3 hint chips DO stand at the bottom-left, 58dp wide
+         (MARK at y 383-402), so the banner needs the same clearance for them. One number,
+         derived once, for everything that must not sit on the column. -->
+    <dimen name="flight_left_chrome_clear">80dp</dimen>
+
+    <!-- THE EMERGENCY BROADCAST NOTICE. PER-DEVICE, exactly like the warning
+         banner's size: the notice sits at the TOP in the gap between the status capsule and the
+         EV slider, anchored to the start of that gap and vertically centred on the capsule.
+
+         ⚠ **MEASURED ON THE RC Plus 2, NOT COMPUTED** — and the computed version of
+         these numbers was wrong in a way that would have shipped. Read off a screenshot of the
+         flight screen with the notice forced visible, at 1920x1200 px and 400 dpi, so 1dp =
+         2.5px on this panel:
+           status capsule          x 20-768 px   =   8 - 307dp   (so its right edge is 307dp,
+                                                                  not the 315dp the child widths
+                                                                  predicted)
+           EV slider "-2" label    x 1563 px     = 625dp         (the real obstacle — the label
+                                                                  stands further left than the
+                                                                  slider line at 1581 px / 632dp)
+           the notice at 11sp      800 px wide   = 320dp         of a 318dp gap
+         So 11sp DID NOT FIT: the notice ran 35dp under the EV label, over a live control. The
+         per-device lever is the text size, so the notice runs at 10sp here. VERIFIED
+         at 10sp on the same device: the capsule measures x 790-1505 px = 316-602dp, 286dp wide,
+         clearing the EV label by 23dp. The WORDING is fixed and is not to be shortened.
+
+         marginStart = the capsule's measured right edge (307 -> 308) + 8dp of air, the band's
+         own rhythm. marginTop centres the notice on the capsule's centre, which the same
+         screenshot puts at 65 px = 26dp; VERIFIED at 14dp, which puts the notice's own centre
+         at 26.6dp (it was 20dp and sat 7dp low).
+         The notice is inside the band's 44dp height, so a tap on it lands on the notice and not
+         on the video.
+
+         ⚠ Re-measure all three whenever the status capsule gains or loses a control, or either
+         of its two wrap_content text views (the signal "%" and the satellite count) changes
+         shape. Nothing here derives itself. -->
+    <dimen name="flight_emergency_notice_margin_start">316dp</dimen>
+    <dimen name="flight_emergency_notice_margin_top">14dp</dimen>
+    <!-- 10sp, below the 11sp notice/banner size used elsewhere on this screen, because
+         the measurement above left no other way to keep the specified wording out of the EV
+         slider. A dp on this 400dpi panel is about 24 % larger than nominal, so 10sp here is
+         about a nominal 12sp. -->
+    <dimen name="flight_emergency_notice_text_size">10sp</dimen>
+
+    <!-- THE FLIGHT SCREEN'S TAK CHANNELS DIALOG, scaled down a quarter.
+         PER-DEVICE: this dialog opens over live video on a 768dp-wide, 480dp-high screen, and it
+         carries TWO channel lists since the Elevated account joined it. Measured on the RC Plus
+         2 with six Standard channels: the dialog reached the full height of the screen
+         and the Elevated section was CUT OFF below the fold — the pilot could see its heading
+         and nothing under it, which is worse than not showing it, because it reads as an empty
+         list rather than as more to scroll to.
+
+         ⚠ THE ROW HEIGHT IS NOT CUT BY A QUARTER, AND THAT IS DELIBERATE. These rows are touch
+         targets over live video, and a miss changes who sees this aircraft. The TEXT comes down
+         13sp -> 10sp and 14sp -> 11sp, and the padding with it; the row goes 32dp -> 30dp, which
+         is hud_column_pill_height, the established minimum for a control the pilot aims
+         at in flight. On this 400dpi panel a dp is about 24 % larger than nominal, so 30dp here
+         is about the physical size of a 37dp target elsewhere. Do not take the row below this
+         to win another line.
+
+         ⚠ 36dp WAS TRIED FIRST AND MADE IT WORSE. The platform's own default for these rows is
+         32dp, so a 36dp "minimum" RAISED them and the dialog grew while the text shrank. Read
+         the default off the device before setting a floor. -->
+    <dimen name="chan_dialog_text_size">10sp</dimen>
+    <dimen name="chan_dialog_row_text_size">11sp</dimen>
+    <dimen name="chan_dialog_row_min_height">30dp</dimen>
+    <dimen name="chan_dialog_pad">14dp</dimen>
+    <dimen name="chan_dialog_gap">6dp</dimen>
+
+</resources>

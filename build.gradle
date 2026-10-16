@@ -1,0 +1,20 @@
+// Root build file. Versions come from gradle.properties.
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.7.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$KOTLIN_VERSION"
+    }
+}
+
+allprojects {
+    repositories {
+        maven { url REPO_MAVEN2 }
+        google()
+        mavenCentral()
+        maven { url JITPACK_MAVEN_URL }
+    }
+}

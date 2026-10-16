@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SCALED TO THIS PANEL: Home keeps the system
+     bars, so it has 768 x 416dp. Every size below is about three quarters of a 1024dp-wide
+     layout's, text floored at 11sp: title 22 -> 17, version 13 -> 11, logo 64 -> 48; the flight card
+     26 -> 20, 15 -> 12, rows 13 -> 11, dots 10 -> 8, its padding 24 -> 16. The card kit's
+     own sizes are in styles.xml (homeCard*, TakButton). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@color/tp_bg_home"
+    android:padding="12dp"
+    android:baselineAligned="false">
+
+    <!-- LEFT: logo + status + Quick Controls. Scrolls instead of silently squashing the last
+         button to nothing when the card's content doesn't fit the screen's vertical budget —
+         LinearLayout has no built-in overflow handling of its own (bit us when a 4th Quick
+         Controls button was added: it measured down to ~1dp tall instead of just running off
+         the bottom, since its wrap_content child got an AT_MOST spec capped to whatever sliver
+         of space was left).
+
+         ⚠ HEIGHT BUDGET. THE SCROLLVIEW IS LOAD-BEARING.
+         DO NOT REMOVE IT to make this column look like the ENTER FLIGHT card beside it.
+
+         ✔ MEASURED ON THE RC PLUS 2. The earlier budget here was arithmetic
+         against a phone, written with no device attached, and two of its numbers were wrong:
+         the buttons render 36dp tall, not the 48dp platform default it assumed, and the gaps
+         between them render about 20dp where the layout asks for 8dp — the Button background
+         carries its own inset.
+
+         What the screen actually gives this column: the window is 1160px tall and the root
+         padding takes 14dp from each end, so the content area ends at y=1110px.
+
+         Before this change STOP/QUIT started at y=1109px — one pixel above the fold, thus
+         entirely off screen, and the pilot had to scroll to reach it. It was NOT reachable
+         without scrolling on the device this application ships to.
+
+         About 48dp was taken back, all of it from padding and gaps:
+
+             root padding      20 -> 14   (12dp, both ends)
+             card padding      14 -> 10   ( 8dp, both ends)
+             card marginTop    12 ->  8   ( 4dp)
+             button margins  10/8/8/8 -> 6/4/4/4  (16dp)
+             divider marginTop 18 -> 12   ( 6dp)
+             STOP/QUIT margin  12 -> 10   ( 2dp)
+
+         ⚠ NO BUTTON GOT SHORTER. They are already 36dp, below the 48dp touch guideline, and
+         this screen is used in gloves. Take space from gaps, never from a target.
+
+         ⚠ The divider and gap above STOP/QUIT are TIGHTENED, NOT REMOVED. They exist because
+         it is the only irreversible control on the card — see its own note below.
+
+         Adding a row here: measure it on the device, do not re-derive it. If the column
+         overflows again the ScrollView still catches it, and that is the point of keeping it.
+         The "fixed-height columns with weighted spacers" rule is about the ENTER
+         FLIGHT card, which is `match_parent` with a weighted spacer further down this file. -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.2"
+        android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingEnd="20dp">
+
+        <!-- Logo + app name + TAK connection indicator -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="6dp">
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/takpilot2_logo"
+                android:layout_marginEnd="12dp" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <!-- Bound to the same string as the launcher label so the two can't drift
+                     apart the next time the app is renamed. -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:text="@string/sample_app_name"
+                    android:textColor="@color/tp_text_primary"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+                <!-- Which exact build this phone is running. Build TIME, not just version, so
+                     two sideloads made minutes apart while debugging can be told apart.
+                     Sits where the TAK indicator used to: that moved to the ENTER FLIGHT card,
+                     which is where a pilot actually acts on it. -->
+                <TextView
+                    android:id="@+id/homeVersion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="v— · built —"
+                    android:textColor="@color/tp_text_secondary"
+                    android:textSize="11sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Quick Controls -->
+        <LinearLayout style="@style/homeCard">
+            <TextView style="@style/homeCardTitle" android:text="Quick Controls" />
+            <Button
+                android:id="@+id/homeTakSetup"
+                style="@style/TakButton.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Pre-Flight Setup" />
+            <Button
+                android:id="@+id/homeFieldGuide"
+                style="@style/TakButton.Info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Field Guide" />
+            <Button
+                android:id="@+id/homeDataSync"
+                style="@style/TakButton.Neutral"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Data Sync" />
+            <Button
+                android:id="@+id/homeDebugLog"
+                style="@style/TakButton.Neutral"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Debug Log" />
+
+            <!-- STOP / QUIT LAST, BEHIND A DIVIDER AND A GAP.
+                 It used to sit second, between Pre-Flight Setup and Field Guide — in the middle
+                 of a run of same-shaped navigation buttons. A pilot reaching for a menu row in a
+                 hurry could tear down the TAK connection and kill the app instead. It is the only
+                 irreversible thing on this card, so it is separated from the things that merely
+                 navigate. The confirm dialog is unchanged; this makes the mis-tap less likely
+                 rather than relying on the dialog to catch it. -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:background="@color/tp_border" />
+            <Button
+                android:id="@+id/homeQuit"
+                style="@style/TakButton.Danger"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="STOP / QUIT" />
+        </LinearLayout>
+
+    </LinearLayout>
+    </ScrollView>
+
+    <!-- RIGHT: the whole card IS the Enter Flight button (clickable, ripple feedback) -->
+    <LinearLayout
+        android:id="@+id/homeEnterFlight"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:background="@drawable/home_flight_card_clickable"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="16dp">
+
+        <View android:layout_width="0dp" android:layout_height="0dp" />
+
+        <!-- The TAK logo was here: 72dp plus 4dp/8dp of margin, 84dp of this card's height.
+             Removed to give that height back to information. The mark is
+             already on the header at the top left of this same screen, so nothing is lost by
+             taking it off the card — it was decoration in the one place the card has to carry
+             the aircraft, the link and the TAK state.
+
+             ⚠ 84dp is now free here. Spend it on a readout, not on putting the logo back. -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ENTER FLIGHT"
+            android:textColor="@color/tp_text_primary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Live FPV · Telemetry · TAK"
+            android:textColor="@color/tp_accent"
+            android:textSize="12sp"
+            android:layout_marginTop="6dp" />
+
+        <!-- FOUR STATUS ROWS: permissions, wifi, TAK, media server.
+             The dot is 8dp and the text 11sp — PER-DEVICE, this screen is 768dp wide. -->
+
+        <!-- ⚠ A CONTROLLER ONCE FLEW A 12.5-HOUR MISSION WITH LOCATION DENIED AND NOBODY KNEW.
+             Android denies silently at setup.
+             The aircraft flew, the video streamed and the markers worked — only the PILOT was
+             missing, published at 0,0 in the "position not known" form for the whole mission,
+             and the single sign was a log line nobody was reading.
+
+             Two states, not three. A permission is granted or it is not; there is nothing to
+             wait for and nothing to be unknown about, so the amber "not yet known" state has
+             no place here.
+
+             ⚠ THE SOURCE IS DjiSdkBridge's OWN GATE, NOT A SEPARATE PERMISSIONS HELPER. It
+             already owns a manifest-VALIDATED required set — it drops anything requested but
+             undeclared, which is the fix for the VIBRATE gate that once stopped the SDK
+             registering. Two competing notions of "permissions" in one app would be worse
+             than the duplication it saves. -->
+        <LinearLayout
+            android:id="@+id/homePermissionsRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="10dp">
+            <View
+                android:id="@+id/homePermissionsDot"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/tak_status_dot" />
+            <TextView
+                android:id="@+id/homePermissionsStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="APP PERMISSIONS: —"
+                android:textColor="@color/tp_text_secondary"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!-- Wifi state, directly above the TAK line it explains. The TAK dot alone cannot
+             separate "server down" from "this controller has no network", and that ambiguity
+             is what had pilots chasing enrollment failures. Three states, same
+             colour rule as everything else: green = internet CONFIRMED (a validated network,
+             not merely an association), amber = wifi but no internet, red = no wifi. -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="4dp">
+            <View
+                android:id="@+id/homeNetworkDot"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/tak_status_dot" />
+            <TextView
+                android:id="@+id/homeNetwork"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="WIFI: —"
+                android:textColor="@color/tp_text_secondary"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!-- TAK connection status. This card is what a pilot taps to fly, so the one thing that
+             decides whether the team will see them belongs where they are about to act on it. -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="10dp">
+            <View
+                android:id="@+id/homeTakDot"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/tak_status_dot" />
+            <TextView
+                android:id="@+id/homeTakStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TAK: Disconnected"
+                android:textColor="@color/tp_text_secondary"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!-- Media server reachability, last of the four.
+
+             ⚠ GREEN MEANS THE SERVER IS UP AND SPEAKING RTSP. IT DOES NOT MEAN IT WILL TAKE THE
+             STREAM. Credentials, whether the path may be published to, and whether the server
+             likes the codec are all answered during a real publish and not before — so the LIVE
+             pill on the flight screen stays the only authority on that. See MediaServerProbe.
+
+             It probes the RTSP port even when the pilot has selected SRT, because SRT is UDP and
+             has nothing to connect to, while the server always serves RTSP to the TAK clients
+             regardless. It therefore tests THE SERVER, which is the question, and not the SRT
+             ingest. -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="4dp">
+            <View
+                android:id="@+id/homeMediaDot"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/tak_status_dot" />
+            <TextView
+                android:id="@+id/homeMediaStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MEDIA SERVER: —"
+                android:textColor="@color/tp_text_secondary"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!-- Aircraft info, centered under the title -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="12dp">
+            <TextView style="@style/homeCardTitle" android:text="Aircraft"
+                android:layout_gravity="center_horizontal" />
+            <TextView android:id="@+id/homeAircraft" style="@style/homeCardValue"
+                android:text="—" android:layout_gravity="center_horizontal" />
+            <TextView android:id="@+id/homeSdk" style="@style/homeCardSub"
+                android:text="MSDK —" android:layout_gravity="center_horizontal" />
+            <!-- The two battery levels READ BACK FROM THE AIRCRAFT, not the saved
+                 preference. They decide how long this flight can last, which is a pre-flight
+                 decision, and reading the aircraft's own values is the only way to catch an
+                 Apply that silently did not take. On the Mini 2 they cannot be changed at all
+                 — it warns at 20% and lands at 10% whatever Pre-Flight says — so this line is
+                 the pilot's only statement of what will actually happen.
+
+                 THIS IS THE ONE STATUS FIELD THE PHONE KEEPS beyond the first five.
+
+                 ⚠ AN OLDER NOTE HERE SAID THESE ROWS "DO NOT FIT THIS CARD ON A 411dp SCREEN"
+                 AND THAT ABOUT 16dp OF SLACK REMAINED. That was measured on a phone, and this
+                 build has ONE target — the RC Plus 2, 768x480dp landscape. Measured from a
+                 screenshot of this very card: the empty band between the last
+                 readout and TAP TO ENTER is 165dp, room for about nine rows. The premise was
+                 inherited, not checked.
+                 Measure before trusting a height claim in this file. -->
+            <TextView android:id="@+id/homeBatteryLevels" style="@style/homeCardSub"
+                android:text="" android:layout_gravity="center_horizontal"
+                android:layout_marginTop="2dp" android:textStyle="bold" />
+
+            <!-- WHERE THE CAMERA WILL WRITE. Red means no recording will happen — the target
+                 is internal memory, or the card is missing, full or unusable. See
+                 AircraftStorage for why this readout exists at all. -->
+            <TextView android:id="@+id/homeStorage" style="@style/homeCardSub"
+                android:text="" android:layout_gravity="center_horizontal"
+                android:layout_marginTop="2dp" android:textStyle="bold" />
+
+            <!-- The rest of the pre-flight readiness block. Each
+                 row reports the AIRCRAFT's answer; amber is "not read yet" and must never be
+                 painted as a working value. -->
+            <TextView android:id="@+id/homeAvoidance" style="@style/homeCardSub"
+                android:text="" android:layout_gravity="center_horizontal"
+                android:layout_marginTop="2dp" />
+
+            <TextView android:id="@+id/homeSignalLoss" style="@style/homeCardSub"
+                android:text="" android:layout_gravity="center_horizontal"
+                android:layout_marginTop="2dp" />
+
+            <TextView android:id="@+id/homeStickMode" style="@style/homeCardSub"
+                android:text="" android:layout_gravity="center_horizontal"
+                android:layout_marginTop="2dp" />
+
+            <TextView android:id="@+id/homeControlResponse" style="@style/homeCardSub"
+                android:text="" android:layout_gravity="center_horizontal"
+                android:layout_marginTop="2dp" />
+
+            <!-- Shown while the aircraft has not finished reporting. It is a HOLD, not a
+                 spinner: a pilot who reads a half-arrived card can act on a value that is
+                 about to change. Hidden the moment every row above has an answer. -->
+            <TextView android:id="@+id/homeInitializing" style="@style/homeCardSub"
+                android:text="READING AIRCRAFT…" android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp" android:textStyle="bold"
+                android:textColor="@color/tp_state_unknown" android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- Spacer pushes the tap hint to the bottom -->
+        <View android:layout_width="0dp" android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="TAP TO ENTER ›"
+            android:textColor="@color/tp_accent"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08" />
+    </LinearLayout>
+</LinearLayout>

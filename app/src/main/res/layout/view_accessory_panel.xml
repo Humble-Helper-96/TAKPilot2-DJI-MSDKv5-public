@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- THE ACCESSORY PANEL: the AL1 light and the AS1 speaker (L2 on the controller).
+
+     An OVERLAY on the flight screen, not a dialog. The pilot reaches it with a hardware button
+     while flying, and a modal dialog would take the whole screen for a brightness slider. It
+     sits over the video on the LEFT, clear of the HUD column and the mini-map on the right and
+     clear of the warning banner above.
+
+     Hidden by default. TAKPilot2GoFlightActivity shows it on L2 and hides it on the next L2 or
+     on the ✕. There is deliberately NO tap-outside-to-close: outside this panel is live video,
+     and a tap there drops a marker. Closing must be a decision, not a miss.
+
+     ⚠ EVERY CONTROL IN HERE STARTS DISABLED. The panel adopts the aircraft's real state on open,
+     and until the accessory answers there is nothing honest to
+     show — an enabled slider sitting at 0 would be a guess dressed up as a reading. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/accessoryPanel"
+    android:layout_width="@dimen/accessory_panel_width"
+    android:layout_height="wrap_content"
+    android:layout_gravity="start|center_vertical"
+    android:layout_marginStart="@dimen/flight_left_chrome_clear"
+    android:background="@drawable/bg_accessory_panel"
+    android:orientation="vertical"
+    android:paddingStart="14dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="14dp"
+    android:paddingBottom="12dp"
+    android:visibility="gone">
+
+    <!-- Title row: what this is, and the way out. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:letterSpacing="0.08"
+            android:text="ACCESSORIES"
+            android:textColor="@color/tp_accent"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/accessoryClose"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:contentDescription="Close the accessory panel"
+            android:gravity="center"
+            android:text="✕"
+            android:textColor="@color/tp_text_primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Shown INSTEAD of the two blocks below when neither accessory has answered. It says which
+         of the two is missing, because "no accessories" when the speaker is fine and only the
+         light is unplugged would send the pilot to the wrong end of the aircraft. -->
+    <TextView
+        android:id="@+id/accessoryNone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp"
+        android:text="Looking for the light and the speaker…"
+        android:textColor="@color/tp_text_secondary"
+        android:textSize="13sp" />
+
+    <!-- ============================ AL1 LIGHT ============================ -->
+    <LinearLayout
+        android:id="@+id/accessoryLightBlock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="10dp"
+        android:visibility="gone">
+
+        <!-- THE LIGHT IS THREE BUTTONS AND NO SEPARATE ON/OFF.
+             Each one is its own toggle: touch it to put the light in that state, touch it again
+             to turn the light off. Green is the state the light is in; all three grey means the
+             light is dark. A fourth on/off pill was a control whose only job was to undo the
+             other three, and it cost a row on a 280dp panel.
+
+             STROBE CARRIES ITS OWN BRIGHTNESS — always full. That is what decouples it: a
+             blinking light is a light meant to be SEEN, and making the pilot pick a brightness
+             for it as well would tie three buttons into a grid of six states.
+
+             MID is gone: on the aircraft it was not tellable from HIGH. -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="6dp"
+            android:text="Light"
+            android:textColor="@color/tp_text_primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/accessoryLightBrightnessRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/accessoryLightLow"
+                android:layout_width="0dp"
+                android:layout_height="34dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_zoom_pill"
+                android:gravity="center"
+                android:text="LOW"
+                android:textColor="@color/tp_text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/accessoryLightHigh"
+                android:layout_width="0dp"
+                android:layout_height="34dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_zoom_pill"
+                android:gravity="center"
+                android:text="HIGH"
+                android:textColor="@color/tp_text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/accessoryLightBlink"
+                android:layout_width="0dp"
+                android:layout_height="34dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_zoom_pill"
+                android:gravity="center"
+                android:text="STROBE"
+                android:textColor="@color/tp_text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- =========================== AS1 SPEAKER =========================== -->
+    <LinearLayout
+        android:id="@+id/accessorySpeakerBlock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="12dp"
+        android:visibility="gone">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/tp_divider" />
+
+        <!-- THE THREE STANDARDISED MESSAGES. Each is its own toggle, the same shape as the
+             light's LOW/HIGH/STROBE: touch one to send it and play it, touch the playing one to
+             stop. Green is the message going out, amber is the upload, grey is idle.
+
+             ⚠ THERE IS NO SEPARATE "PLAY WHAT IS LOADED" CONTROL, and there must not be. The
+             speaker holds ONE sound and this application owns it, so "whatever is loaded" is
+             always the message that was sent last — a second control for it would be a button
+             whose only job is to replay the pill next to it.
+
+             ⚠ REPEAT IS GONE ON PURPOSE. Every message plays SINGLE. A standardised message
+             looping unattended over a public area is the loudspeaker form of the hot microphone
+             that push-to-talk's hold-only rule exists to prevent, and worse in one way: nobody
+             is holding anything, so nothing ends it. -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="6dp"
+            android:text="Speaker"
+            android:textColor="@color/tp_text_primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/accessorySpeakerMessageRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/accessorySpeakerMsg1"
+                android:layout_width="0dp"
+                android:layout_height="34dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_zoom_pill"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="MSG 1"
+                android:textColor="@color/tp_text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/accessorySpeakerMsg2"
+                android:layout_width="0dp"
+                android:layout_height="34dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_zoom_pill"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="MSG 2"
+                android:textColor="@color/tp_text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/accessorySpeakerMsg3"
+                android:layout_width="0dp"
+                android:layout_height="34dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_zoom_pill"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="MSG 3"
+                android:textColor="@color/tp_text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- REPEAT ×3. ARMS the next message: it is sent three times, thirty seconds apart,
+             and then stops by itself. It is NOT the SDK's loop mode — that never ends. Green
+             means armed.
+
+             ⚠ IT DEFAULTS OFF EVERY TIME THE FLIGHT SCREEN OPENS, deliberately, and is not
+             remembered. A run lasts over a minute with the aircraft speaking unattended, so it
+             should be a decision made for this mission, not one inherited from a previous one. -->
+        <TextView
+            android:id="@+id/accessorySpeakerRepeat"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_zoom_pill"
+            android:gravity="center"
+            android:text="REPEAT ×3"
+            android:textColor="@color/tp_text_primary"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <!-- Shown INSTEAD of the pills when no message has been recorded. It names where to go,
+             because a pilot who wants a message now has no way to guess. Never a greyed
+             dead control. -->
+        <TextView
+            android:id="@+id/accessorySpeakerNoMessages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No messages recorded.\nPre-Flight → 7. Speaker Messages."
+            android:textColor="@color/tp_text_secondary"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/accessorySpeakerVolumeLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="Volume"
+            android:textColor="@color/tp_text_secondary"
+            android:textSize="12sp" />
+
+        <SeekBar
+            android:id="@+id/accessorySpeakerVolume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false" />
+
+        <!-- PUSH TO TALK. Hold it — this is never a toggle, because a toggle can leave a hot
+             microphone broadcasting from the aircraft with nobody aware (see SpeakerTalk).
+             Taller than the pills: it is held, not touched, and a held control that is easy to
+             slide off is a control that cuts out mid-sentence.
+             R1 on the controller is the same function; the caption says so, because this button
+             is the only place a pilot would learn it. -->
+        <TextView
+            android:id="@+id/accessorySpeakerTalk"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_zoom_pill"
+            android:gravity="center"
+            android:text="HOLD TO TALK"
+            android:textColor="@color/tp_text_primary"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:text="or hold R1 on the controller"
+            android:textColor="@color/tp_text_muted"
+            android:textSize="11sp" />
+
+        <!-- The speaker plays what it already holds. This line is the only thing that tells a
+             pilot the speaker is loaded and playing, or loaded and silent, or empty. -->
+        <TextView
+            android:id="@+id/accessorySpeakerStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text=""
+            android:textColor="@color/tp_text_secondary"
+            android:textSize="12sp" />
+    </LinearLayout>
+</LinearLayout>

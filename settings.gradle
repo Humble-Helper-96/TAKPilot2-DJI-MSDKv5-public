@@ -1,0 +1,2 @@
+rootProject.name = "TAKPilot2-DJIv5"
+include ':app'

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TAK channels, from the flight screen (FlightActivity.onTakChannelsTapped).
+
+     Reached by a touch-and-hold on the TAK badge, so a pilot can change the scope of this
+     aircraft WITHOUT leaving the flight screen. Leaving it stops the video to the team, which is
+     the last thing a pilot wants in the middle of a sortie.
+
+     Scrolls because it opens over live video in landscape, the same reason dialog_ar_options.xml
+     does.
+
+     Inflated with a ContextThemeWrapper on TakDialogTheme. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/chan_dialog_pad"
+        android:paddingEnd="@dimen/chan_dialog_pad"
+        android:paddingTop="4dp"
+        android:paddingBottom="2dp">
+
+        <!-- ⚠ THE "the TAK server holds these channels" LINE IS GONE.
+             It said where the state lives, which a pilot opening this dialog in flight does not
+             need told every time — and on this screen it cost a line the two channel lists
+             needed. The fact is still on Pre-Flight's own channel section and in the Field
+             Guide, which are where somebody reads it once. -->
+
+        <!-- Shown only when the TAK configuration is locked. -->
+        <TextView
+            android:id="@+id/takChanLocked"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/chan_dialog_gap"
+            android:textColor="@color/tp_state_caution"
+            android:textSize="@dimen/chan_dialog_text_size"
+            android:visibility="gone"
+            android:text="Locked. Touch Unlock to change a channel." />
+
+        <!-- Filled in code, one row for each channel. -->
+        <LinearLayout
+            android:id="@+id/takChanList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/takChanStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/chan_dialog_gap"
+            android:textColor="@color/tp_text_secondary"
+            android:textSize="@dimen/chan_dialog_text_size"
+            android:text="" />
+
+        <!-- The ELEVATED account's channels: shown under the Standard
+             account's so the pilot sees the whole scope of this aircraft in flight. WRITABLE,
+             behind the same lock as the Standard rows — a tick is
+             also the only possible "ignore incoming" control, because inbound CoT carries no
+             channel label. ⚠ The account is shared by the whole fleet, so a change here reaches
+             every controller. Both GONE until an Elevated enrollment exists. -->
+        <TextView
+            android:id="@+id/takChanElevatedLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/chan_dialog_pad"
+            android:paddingBottom="2dp"
+            android:textColor="@color/tp_text_secondary"
+            android:textSize="@dimen/chan_dialog_text_size"
+            android:visibility="gone"
+            android:text="Elevated account (video)" />
+
+        <LinearLayout
+            android:id="@+id/takChanElevatedList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</ScrollView>

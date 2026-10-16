@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The accessory panel's backing. Opaque enough to read a slider against a bright scene, and
+     bordered so the panel's edge is findable over busy video. Not the dialog surface token: this
+     sits ON the picture, and the dialog colour has no transparency to give any of it back. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#E6141416" />
+    <stroke
+        android:width="1dp"
+        android:color="@color/tp_border" />
+    <corners android:radius="8dp" />
+</shape>

@@ -1,0 +1,431 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:navigationBarColor">@color/colorPrimary</item>
+        <item name="actionMenuTextAppearance">@style/menu_item_appearance</item>
+    </style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <!-- OptionsMenu text -->
+    <style name="menu_item_appearance" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Menu">
+        <item name="android:textSize">25sp</item>
+    </style>
+
+
+    <!-- List divider list -->
+    <style name="set_divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1px</item>
+        <item name="android:background">@android:color/black</item>
+    </style>
+
+    <!-- List item value style -->
+    <style name="set_item_value">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/item_min_height</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">@dimen/item_value_size</item>
+        <item name="android:layout_marginRight">15dp</item>
+    </style>
+
+    <!-- List item value style -->
+    <style name="set_item_title">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/item_min_height</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">@dimen/item_title_size</item>
+        <item name="android:layout_marginLeft">15dp</item>
+    </style>
+
+    <!-- List item subtitle style -->
+    <style name="listview_subtitle">
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14dp</item>
+    </style>
+
+    <!-- Common button style -->
+    <style name="common_button">
+        <item name="android:layout_width">100dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">45dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:background">@drawable/round_btn</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="common_button_horizontal">
+        <item name="android:layout_width">100dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">45dp</item>
+        <item name="android:background">@drawable/round_btn</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="set_dialog" parent="@android:style/Theme.Holo.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFrame">@null</item>
+    </style>
+
+    <!-- FPV view style -->
+    <style name="main_camera_view">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">150dp</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginBottom">30dp</item>
+    </style>
+
+    <style name="test_text">
+        <item name="android:shadowColor">@color/white</item>
+        <item name="android:shadowDx">2</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">6</item>
+        <item name="android:textSize">@dimen/test_log_textsize</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+
+    <!-- ExpandableList  item title style -->
+    <style name="expandable_item_title">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/item_min_height</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="android:textSize">@dimen/item_title_size</item>
+        <item name="android:text">"Item name"</item>
+    </style>
+
+    <!-- ExpandableList  item title style -->
+    <style name="expandable_second_level_item_title" parent="expandable_item_title">
+        <item name="android:textColor">@color/gray</item>
+    </style>
+
+
+    <!-- ExpandableList item right arrow style -->
+    <style name="expandable_item_right_arrow">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/item_min_height</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_alignParentEnd">true</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:textSize">@dimen/item_value_size</item>
+        <item name="android:layout_marginRight">15dp</item>
+        <item name="android:text">">"</item>
+    </style>
+
+
+    <!-- ExpandableList item down arrow style -->
+    <style name="expandable_item_down_arrow">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/item_min_height</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_alignParentStart">true</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">@dimen/item_value_size</item>
+        <item name="android:layout_marginLeft">@dimen/fab_margin</item>
+        <item name="android:layout_marginRight">@dimen/fab_margin</item>
+        <item name="android:text">"⌄"</item>
+    </style>
+
+    <style name="button_style">
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:textColor">@drawable/common_text_color</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:background">@drawable/round_btn</item>
+    </style>
+
+    <!-- TAKPilot2 Go connect screen -->
+    <!-- THE FORM KIT IS SCALED TO THIS PANEL: labels 13 -> 11sp with 8dp above instead of 12, fields 15 -> 12sp on 8dp
+         padding, radios 13 -> 11, the AR checks 15 -> 12 on 32dp rows, the FOV stepper
+         40dp/18sp -> 32dp/14sp, its value 16 -> 13. The same three-quarters as the flight
+         screen, floored at 11sp. The screens' own literals took the same map:
+         22 -> 17, 18 -> 14, 16 -> 13, 15 -> 12, 14 -> 12, 13 -> 11, 12 -> 11; 48dp -> 36dp. -->
+    <style name="takLabelStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/tp_text_secondary</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
+    <!-- Multi-column form row for the Pre-Flight Setup screen. Related short fields sit
+         side-by-side instead of each taking a full row, which is what keeps that screen from
+         running on for several scrolls. 4dp of margin per side gives 8dp between columns. -->
+    <style name="takFormRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+    <style name="takColumn">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_marginStart">4dp</item>
+        <item name="android:layout_marginEnd">4dp</item>
+    </style>
+    <!-- Radio option sized to sit as one column of a takFormRow. -->
+    <style name="takColumnRadio">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">@color/tp_text_primary</item>
+        <item name="android:buttonTint">@color/tp_accent</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <!-- FOV calibration stepper (dialog_ar_fov). Compact so the row fits on a phone in
+         landscape with the dialog over live video. -->
+    <style name="takFovStepButton">
+        <item name="android:layout_width">44dp</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/tp_text_primary</item>
+        <item name="android:backgroundTint">@color/tp_btn_neutral</item>
+    </style>
+    <style name="takFovValue">
+        <item name="android:layout_width">64dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/tp_text_primary</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- AR options category toggle (row_ar_category / dialog_ar_options). Same white-on-dark,
+         #9AC4FF-accented treatment the Pre-Flight radios use, so the in-flight menu doesn't read
+         as a different app from the setup screen. -->
+    <style name="takArCheck">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">32dp</item>
+        <item name="android:textColor">@color/tp_text_primary</item>
+        <item name="android:buttonTint">@color/tp_accent</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:paddingStart">8dp</item>
+    </style>
+
+    <style name="takFieldStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/tp_text_primary</item>
+        <item name="android:textColorHint">@color/tp_text_disabled</item>
+        <item name="android:background">@color/tp_surface_field</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textSize">12sp</item>
+        <!-- ⚠ flagNoExtractUi IS LOAD-BEARING ON A PHONE, not a nicety.
+             Every screen in this app is locked to landscape, and in landscape the IME defaults
+             to fullscreen "extract" mode: it covers the window with its own edit box. On a
+             914x411dp phone in landscape that presented as a field that took a cursor and
+             raised no keyboard at all, with the real keyboard only appearing after a back press.
+             This was not seen on taller phones or on a 720dp-high controller, both of which have
+             far more height to give the IME. -->
+        <item name="android:imeOptions">flagNoExtractUi</item>
+    </style>
+
+    <!-- TAKPilot2 Go home screen -->
+    <style name="homeCard">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@color/tp_surface_card</item>
+        <!-- 10dp/8dp, cut from 14dp/12dp to fit the RC Plus 2's home
+             screen without scrolling. See the height budget on the ScrollView in
+             activity_takpilot2go_home.xml. -->
+        <item name="android:padding">8dp</item>
+        <item name="android:layout_marginTop">6dp</item>
+    </style>
+    <style name="homeCardTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/tp_text_caption</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
+    </style>
+    <style name="homeCardValue">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/tp_text_primary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingTop">2dp</item>
+    </style>
+    <style name="homeCardSub">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/tp_text_secondary</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <!-- Dropped-marker dialogs (drop / markers list / row actions / inbound-hide) — same dark
+         card + blue-accent language as the home screen (#0E0E10 bg, #1A1B1E cards, #9AC4FF
+         accent) instead of the stock light AlertDialog.
+         Built on AppCompat rather than the platform Theme.Material.Dialog.Alert: the platform
+         theme left title/message/list-item text black on a Pixel test phone (its
+         Material-You dynamic-color overlay appears to win over a plain theme-attr override on
+         those specific text roles) — AppCompat's own attr resolution doesn't have that
+         override fight, so every text-bearing attr below actually takes effect. Custom
+         windowBackground (tak_dialog_bg) replaces the default light panel; every text-color
+         attr that AlertDialog's internal layouts can pull from is set explicitly (both the
+         android: and plain forms) rather than relying on one to imply the others. -->
+    <style name="TakDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/tak_dialog_bg</item>
+        <item name="colorAccent">@color/tp_accent</item>
+        <item name="android:colorAccent">@color/tp_accent</item>
+        <item name="android:textColorPrimary">@color/tp_text_primary</item>
+        <item name="android:textColorSecondary">@color/tp_text_secondary</item>
+        <item name="android:textColorPrimaryInverse">@color/tp_text_primary</item>
+        <item name="android:textColorAlertDialogListItem">@color/tp_text_primary</item>
+        <item name="android:editTextColor">@color/tp_text_primary</item>
+        <item name="android:textColorHint">@color/tp_text_hint</item>
+    </style>
+
+    <!-- Same, but the positive/default-highlight color reads as a warning (delete / clear-all /
+         inbound-hide confirms) — a red in the same family as the home screen's STOP/QUIT
+         button (#B71C1C) rather than the app's blue accent. -->
+    <style name="TakDialogTheme.Destructive">
+        <item name="colorAccent">@color/tp_btn_danger_dialog</item>
+        <item name="android:colorAccent">@color/tp_btn_danger_dialog</item>
+    </style>
+
+    <!-- Row for the icon+label lists (markers list panel, change-type picker) — an
+         affiliation/type icon to the left of its text, matched to marker_{friendly,hostile,
+         neutral,unknown}.xml so the picker reads the same shapes the map does. -->
+    <style name="TakDialogListIcon">
+        <item name="android:layout_width">28dp</item>
+        <item name="android:layout_height">28dp</item>
+        <item name="android:layout_marginEnd">14dp</item>
+    </style>
+    <style name="TakDialogListLabel">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">@color/tp_text_primary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+    <!-- Flight-screen HUD text. One style so every readout in the right-hand column shares a
+         size and shadow — they sit over both video and black pillarbox, so the drop shadow is
+         what keeps them legible in daylight. -->
+    <style name="hudText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/tp_text_primary</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowColor">@color/tp_shadow</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">3</item>
+    </style>
+
+    <!-- Every HUD readout uses THIS, not hudText directly, so the readouts scale with
+         the target device while the rest of the HUD text does not. -->
+    <style name="flightReadoutText" parent="hudText">
+        <item name="android:textSize">@dimen/flight_readout_text_size</item>
+    </style>
+
+    <!-- One cell of the flight-screen resource row. Equal weight so the four cells never move
+         as their contents change width — this row is watched for a number that CHANGES, and a
+         cell that reflows drags the eye to the wrong thing. Monospace for the same reason. -->
+    <style name="flightResCell">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textColor">@color/tp_state_go_soft</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <!-- Button ROLES. Declares the green=go / blue=informational / red=destructive convention
+         once, instead of re-typing it as an inline textColor + backgroundTint pair on every
+         button. Width, height and margin stay on each button because those vary; the style
+         carries only the role colours. -->
+    <style name="TakButton">
+        <item name="android:textColor">@color/tp_text_primary</item>
+        <!-- THE CARD KIT IS SCALED TO THIS PANEL: the source values were for a 1024 x 720dp
+             screen; this one is 768 x 416dp
+             with the bars (Home is not immersive). The same proportion the flight screen
+             took — about three quarters, floors at 11sp — on the buttons, the card titles,
+             values and subtitles, so Home, Debug and Video Servers move together. The
+             platform button is 48dp/14sp; this is the column pill's height and text. -->
+        <item name="android:minHeight">36dp</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="TakButton.Primary">
+        <item name="android:backgroundTint">@color/tp_btn_primary</item>
+    </style>
+    <style name="TakButton.Neutral">
+        <item name="android:backgroundTint">@color/tp_btn_neutral</item>
+    </style>
+    <style name="TakButton.Info">
+        <item name="android:backgroundTint">@color/tp_btn_info</item>
+    </style>
+    <!-- Tears everything down and kills the process. The heaviest thing on the home screen,
+         which is why it also sits apart from the navigation buttons in the layout. -->
+    <style name="TakButton.Danger">
+        <item name="android:backgroundTint">@color/tp_btn_danger</item>
+    </style>
+    <!-- Moved here from values-v21/. Both items are
+         API 21+, and this application's minSdk is already above that, so the qualifier
+         only ever produced a second file that always applied. -->
+    <!-- Flight screen. No ActionBar — this screen draws its own instrument toolbar.
+
+         The status bar is a SOLID colour matching the flight background, not transparent.
+         The screen IS immersive (SYSTEM_UI_FLAG_FULLSCREEN | IMMERSIVE_STICKY, re-applied in
+         onWindowFocusChanged), so the bar is hidden nearly all the time and this colour is only
+         seen when IMMERSIVE_STICKY shows the bar transiently after a swipe. That moment is
+         exactly why it is solid: SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN makes the window draw under
+         the bar, so a transparent bar puts the system clock and icons straight onto live video,
+         where a bright frame can make them unreadable. Same reasoning as the HUD panels — text
+         over video that the pilot does not control needs a backing. -->
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/tp_bg_flight</item>
+    </style>
+
+    <!-- Home screen: no ActionBar, and a SOLID status bar. This one is NOT immersive — the home
+         activity sets no system-UI flags — so the bar is always on screen. Content is inset
+         below it by padding, but nothing draws INTO that strip, so a transparent status bar
+         here leaves the platform's default light scrim showing through instead of the app's
+         dark background. Colour matches the home layout. -->
+    <style name="AppTheme.NoActionBar.SolidStatusBar">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/tp_bg_home</item>
+    </style>
+</resources>

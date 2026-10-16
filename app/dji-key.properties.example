@@ -1,0 +1,15 @@
+# DJI SDK registration key — copy this file to app/dji-key.properties and fill it in.
+#
+# app/dji-key.properties is GITIGNORED and must stay that way. It holds the key that identifies
+# this application to the DJI SDK.
+#
+# The key is bound to the applicationId in app/build.gradle (org.takpilot2.djiv5 unless you
+# change it). Register that id in your DJI developer account and paste the key it gives you.
+# A suffix, a flavour or a second variant with a different id breaks aircraft registration.
+#
+# gradle.properties has an AIRCRAFT_API_KEY line as a fallback. LEAVE IT EMPTY: that file is
+# tracked, and a key committed there is published.
+#
+# Get a key at https://developer.dji.com
+
+AIRCRAFT_API_KEY=
